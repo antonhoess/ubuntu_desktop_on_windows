@@ -16,11 +16,99 @@ Used versions:
 
 Sounds good? So let's get started...
 
-## Install Ubuntu on Windows
-tbd
 
-## Install desktop environment and remote desktop server on Ubuntu
-tbd
+## Install Ubuntu on Windows
+Steps to perform:
+
+
+### Activate the Developer Mode (if not yet done)
+1. If not yet done, activate the Developer Mode:
+  * Open the Start menu.  
+  * Type _Settings_ and click on the appearing entry.  
+    ![Settings](images/settings.png "Settings")  
+  * Click on _Update & Security_.  
+    ![Update & Security](images/update_and_security.png "Update & Security")  
+  * On the left, choose _For Developers_.  
+    ![For Developers](images/for_developers.png "For Developers")  
+  * If the _Developer Mode_ option is activated, there's nothing to do here. Otherwise click on it.  
+    ![Developer Mode Off](images/developer_mode_off.png "Developer Mode Off")  
+  * You'll be asked if you are sure to turn the developer mode on and install it's components. Click on _Yes_, which will trigger the installation. Wait until the installation has completed.  
+    ![Use Developers Features](images/use_developer_features.png "Use Developers Features")  
+
+2. Install Windows Subsystem for Linux
+  * Open the Start menu.
+  * Type _Windows Features_ and click on the appearing entry.  
+    ![Windows Features](images/windows_features.png "Windows Features")  
+  * Scroll down to the entry _Windows Subsystem for Linux_ and click the checkbox if not yet activated.  
+    ![Windows Subsystem for Linux](images/windows_subsystem_for_linux.png "Windows Subsystem for Linux")
+  * Click on _OK_.  Grant administrator rights if asked for.
+
+3. Reboot Windows.
+
+   
+4. Install Ubuntu:
+  * Open the Start menu.  
+  * Type _Store_ and click on the appearing entry.  
+    ![Microsoft Store](images/microsoft_store.png "Microsoft Store")  
+  * Click the _Search_ field in the top right corner, type in _Ubuntu_, and hit enter.  
+  * Choose the newest Ubuntu version and click on it.  
+    ![Newest Ubuntu](images/ubuntu_2004_lts.png "Newest Ubuntu")    
+  * Click on _Get_ and wait until the download has finished.
+  * When the download has completed, click on _Launch_.  
+  * (For starting Ubuntu at a later time, you can open the start menu, type _Ubuntu_ and clock on the appearing entry, which might not yet available yet.)  
+    ![Ubuntu](images/ubuntu.png "Ubuntu")
+  * Now the   Ubuntu terminal windows should have opened.  
+    ![Ubuntu Install Terminal](images/ubuntu_install_terminal.png "Ubuntu Install Terminal")  
+  * Enter your desired Ubuntu username (which does not need to be the same as your Windows username).  
+  * Enter the desired password for your new Ubuntu user. Repeat the password entry.  
+  * Now you should see a linux prompt waiting for your commands.  
+    Congratulations, you've just installed Ubuntu on your Windows machine!
+
+5. Install system components
+  * System, XFCE, xrdp
+    ``` bash
+    # Update the system.
+    sudo apt update && sudo apt -y upgrade
+    
+    # Install the (lightweight) XFCE desktop environment.
+    sudo apt -y install xfce4
+    
+    # Install remote desktop (RDP) server.
+    sudo apt-get install xrdp
+    
+    # Configure the RDP server.
+    sudo cp /etc/xrdp/xrdp.ini /etc/xrdp/xrdp.ini.bak
+    sudo sed -i 's/3389/3390/g' /etc/xrdp/xrdp.ini
+    sudo sed -i 's/max_bpp=32/#max_bpp=32\nmax_bpp=128/g' /etc/xrdp/xrdp.ini
+    sudo sed -i 's/xserverbpp=24/#xserverbpp=24\nxserverbpp=128/g' /etc/xrdp/xrdp.ini
+    
+    # Start the xrdp server (manually).
+    sudo /etc/init.d/xrdp start
+    ```
+  * Adapt xrdp configuration file
+    ``` bash
+    sudo sed -i 's%\(test -x /etc/X11/Xsession && exec /etc/X11/Xsession\)%#\1%g' /etc/xrdp/startwm.sh
+    sudo sed -i 's%\(exec /bin/sh /etc/X11/Xsession\)%#\1%g' /etc/xrdp/startwm.sh
+    echo -e "\n# xfce\nstartxfce4" | sudo tee -a /etc/xrdp/startwm.sh > /dev/null
+    ```
+
+6. Start Windows remote desktop:
+  * Open the Start menu.  
+  * Type _Remote_ and click on the appearing entry.  
+    ![Remote Desktop Connection](images/remote_desktop_connection.png "Remote Desktop Connection")  
+  * Click on _Show Options_ in the bottom left corner to expand the window.  
+  * Enter the connection information as follows:  
+    ![RDP Settings](images/rdp_settings.png "RDP Settings")
+    * Computer: localhost:3390
+    * User name: \<USER\>
+    * Allow me to save credentials: Check if it's okay for you to store the password. This allows for logging in directly.
+  * Click on _Connect_.
+      * If the _Allow me to save credentials_ option is active, a Windows prompt will appear to ask for the Ubuntu user's password. Windows will store this password for future logins.  
+        ![RDP Enter Credentials](images/rdp_enter_credentials.png "RDP Enter Credentials")
+      * If the _Allow me to save credentials_ option is not active, the xrdp prompt will appear and ask for your Ubuntu user's password. This window will appear on each login.   
+        ![xrdp Login Prompt](images/xrdp_login_prompt.png "xrdp Login Prompt")
+  * Now you should see the full screen XFCE desktop environment.
+        
 
 ## Starting Ubuntu with desktop environment
 This seems to be the most tricky part of this whole setup.
