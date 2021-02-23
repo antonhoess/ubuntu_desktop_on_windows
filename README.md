@@ -124,7 +124,7 @@ wsl <command>
 ### Challenges
 Keeping in mind that our goal is to use just use a single click (or execution of a single command) to start Ubuntu with a desktop environment, we face following challenges:
 * After booting Windows, Ubuntu is down and needs to get started in order to use it. It gets started with its first execution (running `wsl.exe` on the Windows command or execute the program directly from the filesystem). However, when executing Ubuntu, it opens a terminal window, which we don't want.
-* Since at the moment the Ubuntu WSL does not have the classical startup-process (using `/etc/init.d`) implemented, we need to start the remote desktop server manually.
+* Since at the moment the Ubuntu WSL does not have the classical startup-process (using `systemd` / `/etc/init.d`) implemented, we need to start the remote desktop server manually.
 * If we want to launch an Ubuntu terminal on Windows, we should be able to do so!
 
 ### Close the opened Ubuntu WSL terminal
@@ -166,7 +166,7 @@ sudo chmod 440 /etc/sudoers.d/xrdp
 ```
 
 <span style="color:red; font-size:1.2em;">Attention:</span>
-* If you (for any reason) want to use another file name, be aware of not using `.` or `~` in it. Otherwise it will not be scanned from the sudoers system.
+* If you (for any reason) want to use another file name, be aware of not using `.` or `~` in it. Otherwise, it will not be scanned from the sudoers system.
 * If you made a mistake in copying the content to the file, sudoers can't be executed anymore, because it claims there's a file with an invalid syntax. 
   That way you locked yourself out executing root commands. To fix this, just open the Windows command line and enter the following command, which will remove the malformed config file:
 ``` bat
@@ -179,7 +179,7 @@ wsl -u root bash
 and execute all necessary commands.
 
 
-### Bringint it all together
+### Bringing it all together
 To perform all these action at once, we need some scripts. Note, that some commands below may run asynchronously.
 
 #### Starting script on Windows
@@ -195,6 +195,8 @@ Executing this script perform these actions:
 * Set (create) the flag.
 * Start Ubuntu.
 * Start the Windows remote desktop client which will connect to the server.
+
+To prevent the terminal window shows up until the system has started, just create a shortcut to the batch script and in the settings go to "Run" and select "Minimized".
 
 #### Starting script on Ubuntu
 Add the following code block to the very end of `~/.bashrc`:
@@ -230,6 +232,9 @@ On clicking the script `Start Ubuntu 20.04 LTS WSL VM.bat` on Windows, you shoul
 
 _**Congratulations!**_
 
+
+## Additional commands
+* Shutdown Ubuntu: `wsl.exe --shutdown`
 
 ## Conclusion
 After installing the necessary software, the whole mechanism comes down to:
