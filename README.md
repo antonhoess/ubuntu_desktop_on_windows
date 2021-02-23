@@ -234,7 +234,13 @@ _**Congratulations!**_
 
 
 ## Additional commands
+* Help on WSL: `wsl -h`
 * Shutdown Ubuntu: `wsl.exe --shutdown`
+* Create backup (should be created regularly, since the WSL system (configuration / data) is hard to access if there are any problems)
+  * List all systems with `wsl --list` and find the name of the one you want to back up
+  * Create a backup: `wsl --export <IMAGE_NAME> <EXPORT_FILENAME.tar>`
+* Restore backup: `wsl --import <IMAGE_NAME> <INSTALL_LOCATION> <PATH\TO\EXPORT_FILENAME.tar>`
+
 
 ## Conclusion
 After installing the necessary software, the whole mechanism comes down to:
